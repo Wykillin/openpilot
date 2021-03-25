@@ -261,27 +261,33 @@ FW_VERSIONS = {
     (Ecu.fwdRadar, 0x7d0, None): [
       b'\xf1\x00TM__ SCC F-CUP      1.00 1.03 99110-S2000         \xf1\xa01.03',
       b'\xf1\x00TM__ SCC F-CUP      1.00 1.02 99110-S2000         \xf1\xa01.02',
+      b'\xf1\000TM__ SCC F-CUP      1.00 1.02 99110-S2000         \xf1\xa01.02',
     ],
     (Ecu.esp, 0x7d1, None): [
       b'\xf1\x00TM ESC \r 104\x19\a\b 58910-S2650\xf1\xa01.04',
       b'\xf1\x00TM ESC \x02 100\x18\x030 58910-S2600\xf1\xa01.00',
-      b'\xf1\x00TM ESC \f 103\x30\x21\x06 58910-S2550\xf1\xa01.03'
+      b'\xf1\x00TM ESC \f 103\x30\x21\x06 58910-S2550\xf1\xa01.03',
+      b'\xf1\000TM ESC \f 103\030\021\006 58910-S2550\xf1\xa01.03',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xf1\x81606G3051\x00\x00\x00\x00\x00\x00\x00\x00',
-      b'\xf1\x81606EA051\x00\x00\x00\x00\x00\x00\x00\x00',      
+      b'\xf1\x81606EA051\x00\x00\x00\x00\x00\x00\x00\x00',
+      b'\xf1\x81606G3051\000\000\000\000\000\000\000\000',
     ],
     (Ecu.eps, 0x7d4, None): [
       b'\xf1\x00TM  MDPS C 1.00 1.01 56340-S2000 9129',
-      b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409',      
+      b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409',
+      b'\xf1\000TM  MDPS C 1.00 1.01 56340-S2000 9129',
     ],
     (Ecu.fwdCamera, 0x7c4, None): [
       b'\xf1\x00TM  MFC  AT USA LHD 1.00 1.00 99211-S2000 180409',
+      b'\xf1\000TM  MFC  AT USA LHD 1.00 1.00 99211-S2000 180409',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xf1\x87SDKXAA1704864GG1\x88\x87xwfevW\x88\x88\x98\x88w\x88\x87xwwww\x86o\xfc\xffu3_\xffc\t\xf1\x816W3E1051\x00\x00\xf1\x006W351_C2\x00\x006W3E1051\x00\000TTM4G24NS5\x00\x00\x00\x00',
       b'\xf1\x87LDLUEA6159884HG1\x88\x87hv\x99\x99y\x97\x89\xaa\xb8\x9ax\x99\x87\x89y\x99\xb7\x99\xa7?\xf7\xff\x97wo\xff\xf3\x05\xf1\x816W3E1051\x00\x00\xf1\x006W351_C2\x00\x006W3E1051\x00\x00TTM4T20NS5\x00\x00\x00\x00',
       b'\xf1\x87SBJWAA6562474GG0ffvgeTeFx\x88\x97\x88ww\x87www\x87w\x84o\xfa\xff\x87fO\xff\xc2\xf1\x816W3C2051\x00\x00\xf1\x006W351_C2\x00\x006W3C2051\x00\x00TTM2G24NS1\x00\x00\x00\x00',
+      b'\xf1\x87SDKXAA1704864GG1\x88\x87xwfevW\x88\x88\x98\x88w\x88\x87xwwww\x86o\xfc\xffu3_\xffc\t\xf1\x816W3E1051\000\000\xf1\0006W351_C2\000\0006W3E1051\000\000TTM4G24NS5\000\000\000\000',
     ],
   },
   CAR.KIA_STINGER: {
