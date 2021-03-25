@@ -1,3 +1,11 @@
+Version 0.8.3 (2021-XX-XX)
+========================
+ * NEOS update: update packages and support for new UI
+ * New offroad UI based on Qt
+ * Default SSH key only used for setup
+ * Kia Ceed 2019 support thanks to ZanZaD13!
+ * Kia Seltos 2021 support thanks to speedking456!
+
 Version 0.8.2 (2021-02-26)
 ========================
  * Use model points directly in MPC (no more polyfits), making lateral planning more accurate
