@@ -90,10 +90,10 @@ def update_panda():
     cloudlog.info("Panda still not booting, exiting")
     raise AssertionError
 
-  panda_signature = panda.get_signature()
-  if panda_signature != fw_signature:
-    cloudlog.info("Version mismatch after flashing, exiting")
-    raise AssertionError
+ # panda_signature = panda.get_signature()
+ # if panda_signature != fw_signature:
+ #   cloudlog.info("Version mismatch after flashing, exiting")
+ #   raise AssertionError
 
   cloudlog.info("Resetting panda")
   panda.reset()
