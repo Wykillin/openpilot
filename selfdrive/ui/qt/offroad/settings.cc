@@ -10,17 +10,28 @@
 #include "widgets/input.hpp"
 #include "widgets/toggle.hpp"
 #include "widgets/offroad_alerts.hpp"
+<<<<<<< HEAD
+=======
+#include "widgets/scrollview.hpp"
+>>>>>>> upstream/master-ci
 #include "widgets/controls.hpp"
 #include "widgets/ssh_keys.hpp"
 #include "common/params.h"
 #include "common/util.h"
 #include "selfdrive/hardware/hw.h"
+<<<<<<< HEAD
+=======
+#include "home.hpp"
+>>>>>>> upstream/master-ci
 
 
 QWidget * toggles_panel() {
   QVBoxLayout *toggles_list = new QVBoxLayout();
 
+<<<<<<< HEAD
   toggles_list->setMargin(50);
+=======
+>>>>>>> upstream/master-ci
   toggles_list->addWidget(new ParamControl("OpenpilotEnabledToggle",
                                             "Enable openpilot",
                                             "Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off.",
@@ -58,11 +69,19 @@ QWidget * toggles_panel() {
   toggles_list->addWidget(record_toggle);
   toggles_list->addWidget(horizontal_line());
   toggles_list->addWidget(new ParamControl("EndToEndToggle",
+<<<<<<< HEAD
                                            "Ignore lanelines (Experimental)",
                                            "In this mode openpilot will ignore lanelines and just drive how it thinks a human would.",
                                            "../assets/offroad/icon_road.png"));
 
   bool record_lock = Params().read_db_bool("RecordFrontLock");
+=======
+                                           "\U0001f96c Disable use of lanelines (Alpha) \U0001f96c",
+                                           "In this mode openpilot will ignore lanelines and just drive how it thinks a human would.",
+                                           "../assets/offroad/icon_road.png"));
+
+  bool record_lock = Params().getBool("RecordFrontLock");
+>>>>>>> upstream/master-ci
   record_toggle->setEnabled(!record_lock);
 
   QWidget *widget = new QWidget;
@@ -72,20 +91,24 @@ QWidget * toggles_panel() {
 
 DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   QVBoxLayout *device_layout = new QVBoxLayout;
+<<<<<<< HEAD
   device_layout->setMargin(100);
+=======
+>>>>>>> upstream/master-ci
 
   Params params = Params();
-  std::vector<std::pair<std::string, std::string>> labels = {
-    {"Dongle ID", params.get("DongleId", false)},
-  };
 
-  // get serial number
-  //std::string cmdline = util::read_file("/proc/cmdline");
-  //auto delim = cmdline.find("serialno=");
-  //if (delim != std::string::npos) {
-  //  labels.push_back({"Serial", cmdline.substr(delim, cmdline.find(" ", delim))});
-  //}
+  QString dongle = QString::fromStdString(params.get("DongleId", false));
+  device_layout->addWidget(new LabelControl("Dongle ID", dongle));
+  device_layout->addWidget(horizontal_line());
 
+  QString serial = QString::fromStdString(params.get("HardwareSerial", false));
+  device_layout->addWidget(new LabelControl("Serial", serial));
+
+  // offroad-only buttons
+  QList<ButtonControl*> offroad_btns;
+
+<<<<<<< HEAD
   for (auto &l : labels) {
     device_layout->addWidget(new LabelControl(QString::fromStdString(l.first),
                              QString::fromStdString(l.second)));
@@ -119,6 +142,43 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
                                                }
                                              }));
 
+=======
+  offroad_btns.append(new ButtonControl("Driver Camera", "PREVIEW",
+                                   "Preview the driver facing camera to help optimize device mounting position for best driver monitoring experience. (vehicle must be off)",
+                                   [=]() { 
+                                      Params().putBool("IsDriverViewEnabled", true);
+                                      GLWindow::ui_state.scene.driver_view = true; }
+                                    ));
+
+  offroad_btns.append(new ButtonControl("Reset Calibration", "RESET",
+                                   "openpilot requires the device to be mounted within 4° left or right and within 5° up or down. openpilot is continuously calibrating, resetting is rarely required.", [=]() {
+    if (ConfirmationDialog::confirm("Are you sure you want to reset calibration?")) {
+      Params().remove("CalibrationParams");
+    }
+  }));
+
+  offroad_btns.append(new ButtonControl("Review Training Guide", "REVIEW",
+                                        "Review the rules, features, and limitations of openpilot", [=]() {
+    if (ConfirmationDialog::confirm("Are you sure you want to review the training guide?")) {
+      Params().remove("CompletedTrainingVersion");
+      emit reviewTrainingGuide();
+    }
+  }));
+
+  QString brand = params.getBool("Passive") ? "dashcam" : "openpilot";
+  offroad_btns.append(new ButtonControl("Uninstall " + brand, "UNINSTALL", "", [=]() {
+    if (ConfirmationDialog::confirm("Are you sure you want to uninstall?")) {
+      Params().putBool("DoUninstall", true);
+    }
+  }));
+
+  for(auto &btn : offroad_btns){
+    device_layout->addWidget(horizontal_line());
+    QObject::connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
+    device_layout->addWidget(btn);
+  }
+
+>>>>>>> upstream/master-ci
   // power buttons
   QHBoxLayout *power_layout = new QHBoxLayout();
   power_layout->setSpacing(30);
@@ -155,16 +215,25 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
 
 DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent) {
   QVBoxLayout *main_layout = new QVBoxLayout(this);
+<<<<<<< HEAD
   main_layout->setMargin(100);
+=======
+>>>>>>> upstream/master-ci
   setLayout(main_layout);
   setStyleSheet(R"(QLabel {font-size: 50px;})");
 }
 
 void DeveloperPanel::showEvent(QShowEvent *event) {
   Params params = Params();
+<<<<<<< HEAD
   std::string brand = params.read_db_bool("Passive") ? "dashcam" : "openpilot";
   QList<QPair<QString, std::string>> dev_params = {
     {"Version", brand + " v" + params.get("Version", false)},
+=======
+  std::string brand = params.getBool("Passive") ? "dashcam" : "openpilot";
+  QList<QPair<QString, std::string>> dev_params = {
+    {"Version", brand + " v" + params.get("Version", false).substr(0, 14)},
+>>>>>>> upstream/master-ci
     {"Git Branch", params.get("GitBranch", false)},
     {"Git Commit", params.get("GitCommit", false).substr(0, 10)},
     {"Panda Firmware", params.get("PandaFirmwareHex", false)},
@@ -189,6 +258,7 @@ void DeveloperPanel::showEvent(QShowEvent *event) {
 QWidget * network_panel(QWidget * parent) {
 #ifdef QCOM
   QVBoxLayout *layout = new QVBoxLayout;
+<<<<<<< HEAD
   layout->setMargin(100);
   layout->setSpacing(30);
 
@@ -208,12 +278,24 @@ QWidget * network_panel(QWidget * parent) {
   layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
                                       [=]() { std::system(launch_tethering); }));
 
+=======
+  layout->setSpacing(30);
+
+  // wifi + tethering buttons
+  layout->addWidget(new ButtonControl("WiFi Settings", "OPEN", "",
+                                      [=]() { HardwareEon::launch_wifi(); }));
+  layout->addWidget(horizontal_line());
+
+  layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
+                                      [=]() { HardwareEon::launch_tethering(); }));
+>>>>>>> upstream/master-ci
   layout->addWidget(horizontal_line());
 
   // SSH key management
   layout->addWidget(new SshToggle());
   layout->addWidget(horizontal_line());
   layout->addWidget(new SshControl());
+<<<<<<< HEAD
 
   layout->addStretch(1);
 
@@ -225,11 +307,31 @@ QWidget * network_panel(QWidget * parent) {
   return w;
 }
 
+=======
+
+  layout->addStretch(1);
+
+  QWidget *w = new QWidget;
+  w->setLayout(layout);
+#else
+  Networking *w = new Networking(parent);
+#endif
+  return w;
+}
+
+>>>>>>> upstream/master-ci
 SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   // setup two main layouts
   QVBoxLayout *sidebar_layout = new QVBoxLayout();
   sidebar_layout->setMargin(0);
   panel_widget = new QStackedWidget();
+<<<<<<< HEAD
+=======
+  panel_widget->setStyleSheet(R"(
+    border-radius: 30px;
+    background-color: #292929;
+  )");
+>>>>>>> upstream/master-ci
 
   // close button
   QPushButton *close_btn = new QPushButton("X");
@@ -246,8 +348,16 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QObject::connect(close_btn, SIGNAL(released()), this, SIGNAL(closeSettings()));
 
   // setup panels
+<<<<<<< HEAD
   QPair<QString, QWidget *> panels[] = {
     {"Device", new DevicePanel(this)},
+=======
+  DevicePanel *device = new DevicePanel(this);
+  QObject::connect(device, SIGNAL(reviewTrainingGuide()), this, SIGNAL(reviewTrainingGuide()));
+
+  QPair<QString, QWidget *> panels[] = {
+    {"Device", device},
+>>>>>>> upstream/master-ci
     {"Network", network_panel(this)},
     {"Toggles", toggles_panel()},
     {"Developer", new DeveloperPanel()},
@@ -259,7 +369,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     QPushButton *btn = new QPushButton(name);
     btn->setCheckable(true);
     btn->setStyleSheet(R"(
-      * {
+      QPushButton {
         color: grey;
         border: none;
         background: none;
@@ -276,8 +386,17 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     nav_btns->addButton(btn);
     sidebar_layout->addWidget(btn, 0, Qt::AlignRight);
 
+<<<<<<< HEAD
     panel_widget->addWidget(panel);
     QObject::connect(btn, &QPushButton::released, [=, w = panel]() {
+=======
+    panel->setContentsMargins(50, 25, 50, 25);
+
+    ScrollView *panel_frame = new ScrollView(panel, this);
+    panel_widget->addWidget(panel_frame);
+
+    QObject::connect(btn, &QPushButton::released, [=, w = panel_frame]() {
+>>>>>>> upstream/master-ci
       panel_widget->setCurrentWidget(w);
     });
   }
@@ -291,6 +410,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   sidebar_widget->setLayout(sidebar_layout);
   sidebar_widget->setFixedWidth(500);
   settings_layout->addWidget(sidebar_widget);
+<<<<<<< HEAD
 
   panel_frame = new QScrollArea;
   panel_frame->setWidget(panel_widget);
@@ -302,6 +422,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     background-color: #292929;
   )");
   settings_layout->addWidget(panel_frame);
+=======
+  settings_layout->addWidget(panel_widget);
+>>>>>>> upstream/master-ci
 
   // setup panel scrolling
   QScroller *scroller = QScroller::scroller(panel_frame);

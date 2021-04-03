@@ -7,7 +7,11 @@ export OPENBLAS_NUM_THREADS=1
 export VECLIB_MAXIMUM_THREADS=1
 
 if [ -z "$REQUIRED_NEOS_VERSION" ]; then
+<<<<<<< HEAD
   export REQUIRED_NEOS_VERSION="16.1"
+=======
+  export REQUIRED_NEOS_VERSION="16.2"
+>>>>>>> upstream/master-ci
 fi
 
 if [ -z "$AGNOS_VERSION" ]; then

@@ -33,7 +33,7 @@ class RequestRepeater : public QObject {
   Q_OBJECT
 
 public:
-  explicit RequestRepeater(QWidget* parent, QString requestURL, int period = 10, QVector<QPair<QString, QJsonValue>> payloads = *(new QVector<QPair<QString, QJsonValue>>()), bool disableWithScreen = true);
+  explicit RequestRepeater(QWidget* parent, QString requestURL, int period = 10, const QString &cache_key = "", bool disableWithScreen = true);
   bool active = true;
 
 private:
@@ -41,7 +41,12 @@ private:
   QNetworkReply* reply;
   QNetworkAccessManager* networkAccessManager;
   QTimer* networkTimer;
+<<<<<<< HEAD
   void sendRequest(QString requestURL, QVector<QPair<QString, QJsonValue>> payloads);
+=======
+  QString cache_key;
+  void sendRequest(QString requestURL);
+>>>>>>> upstream/master-ci
 
 private slots:
   void requestTimeout();
@@ -50,4 +55,5 @@ private slots:
 signals:
   void receivedResponse(QString response);
   void failedResponse(QString errorString);
+  void timeoutResponse(QString errorString);
 };

@@ -29,6 +29,10 @@ public:
 private:
   QPushButton btn;
   QString username;
+<<<<<<< HEAD
+=======
+  QLabel username_label;
+>>>>>>> upstream/master-ci
 
   // networking
   QTimer* networkTimer;

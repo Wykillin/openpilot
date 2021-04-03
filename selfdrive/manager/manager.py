@@ -16,7 +16,11 @@ from selfdrive.manager.helpers import unblock_stdout
 from selfdrive.manager.process import ensure_running
 from selfdrive.manager.process_config import managed_processes
 from selfdrive.registration import register
+<<<<<<< HEAD
 from selfdrive.swaglog import add_logentries_handler, cloudlog
+=======
+from selfdrive.swaglog import cloudlog, add_file_handler
+>>>>>>> upstream/master-ci
 from selfdrive.version import dirty, version
 
 
@@ -183,7 +187,11 @@ if __name__ == "__main__":
   try:
     main()
   except Exception:
+<<<<<<< HEAD
     add_logentries_handler(cloudlog)
+=======
+    add_file_handler(cloudlog)
+>>>>>>> upstream/master-ci
     cloudlog.exception("Manager failed to start")
 
     # Show last 3 lines of traceback

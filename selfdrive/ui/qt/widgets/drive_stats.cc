@@ -1,8 +1,11 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+<<<<<<< HEAD
 #include <QLabel>
 #include <QStackedLayout>
+=======
+>>>>>>> upstream/master-ci
 #include <QVBoxLayout>
 
 #include "api.hpp"
@@ -11,6 +14,7 @@
 
 const double MILE_TO_KM = 1.60934;
 
+<<<<<<< HEAD
 void clearLayouts(QLayout* layout) {
   while (QLayoutItem* item = layout->takeAt(0)) {
     if (QWidget* widget = item->widget()) {
@@ -33,52 +37,76 @@ QLayout* build_stat(QString name, int stat) {
     font-weight: 600;
   )");
   layout->addWidget(metric, 0, Qt::AlignLeft);
+=======
+static QLayout* build_stat_layout(QLabel** metric, const QString& name) {
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->setMargin(0);
+  *metric = new QLabel("0");
+  (*metric)->setStyleSheet("font-size: 80px; font-weight: 600;");
+  layout->addWidget(*metric, 0, Qt::AlignLeft);
+>>>>>>> upstream/master-ci
 
   QLabel* label = new QLabel(name);
-  label->setStyleSheet(R"(
-    font-size: 45px;
-    font-weight: 500;
-  )");
+  label->setStyleSheet("font-size: 45px; font-weight: 500;");
   layout->addWidget(label, 0, Qt::AlignLeft);
-
   return layout;
 }
 
+<<<<<<< HEAD
 void DriveStats::parseError(QString response) {
   clearLayouts(vlayout);
   vlayout->addWidget(new QLabel("No Internet connection"), 0, Qt::AlignCenter);
 }
 
+=======
+>>>>>>> upstream/master-ci
 void DriveStats::parseResponse(QString response) {
-  response.chop(1);
-  clearLayouts(vlayout);
+  response = response.trimmed();
   QJsonDocument doc = QJsonDocument::fromJson(response.toUtf8());
   if (doc.isNull()) {
     qDebug() << "JSON Parse failed on getting past drives statistics";
     return;
   }
 
+<<<<<<< HEAD
   bool metric = Params().read_db_bool("IsMetric");
+=======
+  auto update = [](const QJsonObject &obj, StatsLabels& labels, bool metric) {
+    labels.routes->setText(QString::number((int)obj["routes"].toDouble()));
+    labels.distance->setText(QString::number(int(obj["distance"].toDouble() * (metric ? MILE_TO_KM : 1))));
+    labels.hours->setText(QString::number((int)(obj["minutes"].toDouble() / 60)));
+  };
+>>>>>>> upstream/master-ci
 
+  bool metric = Params().getBool("IsMetric");
   QJsonObject json = doc.object();
-  auto all = json["all"].toObject();
-  auto week = json["week"].toObject();
+  update(json["all"].toObject(), all_, metric);
+  update(json["week"].toObject(), week_, metric);
+}
 
+<<<<<<< HEAD
   QGridLayout* gl = new QGridLayout();
   gl->setMargin(0);
+=======
+DriveStats::DriveStats(QWidget* parent) : QWidget(parent) {
+  setStyleSheet("QLabel {font-size: 48px; font-weight: 500;}");
+>>>>>>> upstream/master-ci
 
-  int all_distance = all["distance"].toDouble() * (metric ? MILE_TO_KM : 1);
+  auto add_stats_layouts = [&](QGridLayout* gl, StatsLabels& labels, int row, const char* distance_unit) {
+    gl->addLayout(build_stat_layout(&labels.routes, "DRIVES"), row, 0, 3, 1);
+    gl->addLayout(build_stat_layout(&labels.distance, distance_unit), row, 1, 3, 1);
+    gl->addLayout(build_stat_layout(&labels.hours, "HOURS"), row, 2, 3, 1);
+  };
+
+  const char* distance_unit = Params().getBool("IsMetric") ? "KM" : "MILES";
+  QGridLayout* gl = new QGridLayout();
+  gl->setMargin(0);
   gl->addWidget(new QLabel("ALL TIME"), 0, 0, 1, 3);
-  gl->addLayout(build_stat("DRIVES", all["routes"].toDouble()), 1, 0, 3, 1);
-  gl->addLayout(build_stat(metric ? "KM" : "MILES", all_distance), 1, 1, 3, 1);
-  gl->addLayout(build_stat("HOURS", all["minutes"].toDouble() / 60), 1, 2, 3, 1);
-
-  int week_distance = week["distance"].toDouble() * (metric ? MILE_TO_KM : 1);
+  add_stats_layouts(gl, all_, 1, distance_unit);
   gl->addWidget(new QLabel("PAST WEEK"), 6, 0, 1, 3);
-  gl->addLayout(build_stat("DRIVES", week["routes"].toDouble()), 7, 0, 3, 1);
-  gl->addLayout(build_stat(metric ? "KM" : "MILES", week_distance), 7, 1, 3, 1);
-  gl->addLayout(build_stat("HOURS", week["minutes"].toDouble() / 60), 7, 2, 3, 1);
+  add_stats_layouts(gl, week_, 7, distance_unit);
 
+<<<<<<< HEAD
   QWidget* q = new QWidget;
   q->setLayout(gl);
   vlayout->addWidget(q);
@@ -94,11 +122,18 @@ DriveStats::DriveStats(QWidget* parent) : QWidget(parent) {
       font-weight: 500;
     }
   )");
+=======
+  QVBoxLayout* vlayout = new QVBoxLayout(this);
+  vlayout->addLayout(gl);
+>>>>>>> upstream/master-ci
 
   // TODO: do we really need to update this frequently?
   QString dongleId = QString::fromStdString(Params().get("DongleId"));
   QString url = "https://api.commadotai.com/v1.1/devices/" + dongleId + "/stats";
-  RequestRepeater* repeater = new RequestRepeater(this, url, 13);
+  RequestRepeater* repeater = new RequestRepeater(this, url, 13, "ApiCache_DriveStats");
   QObject::connect(repeater, SIGNAL(receivedResponse(QString)), this, SLOT(parseResponse(QString)));
+<<<<<<< HEAD
   QObject::connect(repeater, SIGNAL(failedResponse(QString)), this, SLOT(parseError(QString)));
+=======
+>>>>>>> upstream/master-ci
 }

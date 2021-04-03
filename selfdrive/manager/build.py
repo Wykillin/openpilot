@@ -10,10 +10,17 @@ import textwrap
 from common.basedir import BASEDIR
 from common.spinner import Spinner
 from common.text_window import TextWindow
+<<<<<<< HEAD
 from selfdrive.swaglog import add_logentries_handler, cloudlog
 from selfdrive.version import dirty
 
 TOTAL_SCONS_NODES = 1225
+=======
+from selfdrive.swaglog import cloudlog, add_file_handler
+from selfdrive.version import dirty
+
+TOTAL_SCONS_NODES = 2405
+>>>>>>> upstream/master-ci
 MAX_BUILD_PROGRESS = 100
 PREBUILT = os.path.exists(os.path.join(BASEDIR, 'prebuilt'))
 
@@ -70,7 +77,11 @@ def build(spinner, dirty=False):
         errors = [line.decode('utf8', 'replace') for line in compile_output
                   if any([err in line for err in [b'error: ', b'not found, needed by target']])]
         error_s = "\n".join(errors)
+<<<<<<< HEAD
         add_logentries_handler(cloudlog)
+=======
+        add_file_handler(cloudlog)
+>>>>>>> upstream/master-ci
         cloudlog.error("scons build failed\n" + error_s)
 
         # Show TextWindow

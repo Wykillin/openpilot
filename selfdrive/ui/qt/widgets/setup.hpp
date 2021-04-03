@@ -1,7 +1,12 @@
 #pragma once
 
 #include <QLabel>
+<<<<<<< HEAD
 #include <QStackedLayout>
+=======
+#include <QStackedWidget>
+#include <QVBoxLayout>
+>>>>>>> upstream/master-ci
 #include <QWidget>
 
 #include "api.hpp"
@@ -48,7 +53,7 @@ public:
   explicit SetupWidget(QWidget* parent = 0);
 
 private:
-  QStackedLayout* mainLayout;
+  QStackedWidget* mainLayout;
   CommaApi* api;
   PrimeAdWidget *primeAd;
   PrimeUserWidget *primeUser;

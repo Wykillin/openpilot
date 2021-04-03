@@ -53,12 +53,26 @@ public:
   ButtonControl(const QString &title, const QString &text, const QString &desc, Functor functor, const QString &icon = "", QWidget *parent = nullptr) : AbstractControl(title, desc, icon, parent) {
     btn.setText(text);
     btn.setStyleSheet(R"(
+<<<<<<< HEAD
       padding: 0;
       border-radius: 50px;
       font-size: 35px;
       font-weight: 500;
       color: #E4E4E4;
       background-color: #393939;
+=======
+      QPushButton {
+        padding: 0;
+        border-radius: 50px;
+        font-size: 35px;
+        font-weight: 500;
+        color: #E4E4E4;
+        background-color: #393939;
+      }
+      QPushButton:disabled {
+        color: #33E4E4E4;
+      }
+>>>>>>> upstream/master-ci
     )");
     btn.setFixedSize(250, 100);
     QObject::connect(&btn, &QPushButton::released, functor);
@@ -66,6 +80,14 @@ public:
   }
   void setText(const QString &text) { btn.setText(text); }
 
+<<<<<<< HEAD
+=======
+public slots:
+  void setEnabled(bool enabled) {
+    btn.setEnabled(enabled);
+  };
+
+>>>>>>> upstream/master-ci
 private:
   QPushButton btn;
 };
@@ -99,12 +121,20 @@ class ParamControl : public ToggleControl {
 public:
   ParamControl(const QString &param, const QString &title, const QString &desc, const QString &icon, QWidget *parent = nullptr) : ToggleControl(title, desc, icon, parent) {
     // set initial state from param
+<<<<<<< HEAD
     if (Params().read_db_bool(param.toStdString().c_str())) {
       toggle.togglePosition();
     }
     QObject::connect(this, &ToggleControl::toggleFlipped, [=](int state) {
       char value = state ? '1' : '0';
       Params().write_db_value(param.toStdString().c_str(), &value, 1);
+=======
+    if (Params().getBool(param.toStdString().c_str())) {
+      toggle.togglePosition();
+    }
+    QObject::connect(this, &ToggleControl::toggleFlipped, [=](int state) {
+      Params().putBool(param.toStdString().c_str(), (bool)state);
+>>>>>>> upstream/master-ci
     });
   }
 };

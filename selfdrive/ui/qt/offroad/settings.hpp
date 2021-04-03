@@ -17,6 +17,11 @@ class DevicePanel : public QWidget {
   Q_OBJECT
 public:
   explicit DevicePanel(QWidget* parent = nullptr);
+<<<<<<< HEAD
+=======
+signals:
+  void reviewTrainingGuide();
+>>>>>>> upstream/master-ci
 };
 
 class DeveloperPanel : public QFrame {
@@ -37,11 +42,19 @@ public:
 
 signals:
   void closeSettings();
+<<<<<<< HEAD
+=======
+  void offroadTransition(bool offroad);
+  void reviewTrainingGuide();
+>>>>>>> upstream/master-ci
 
 private:
   QPushButton *sidebar_alert_widget;
   QWidget *sidebar_widget;
   QButtonGroup *nav_btns;
   QStackedWidget *panel_widget;
+<<<<<<< HEAD
   QScrollArea *panel_frame;
+=======
+>>>>>>> upstream/master-ci
 };

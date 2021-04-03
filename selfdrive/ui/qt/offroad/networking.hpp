@@ -15,7 +15,10 @@ class WifiUI : public QWidget {
   Q_OBJECT
 
 public:
+<<<<<<< HEAD
   int page;
+=======
+>>>>>>> upstream/master-ci
   explicit WifiUI(QWidget *parent = 0, WifiManager* wifi = 0);
 
 private:
@@ -29,10 +32,13 @@ signals:
   void connectToNetwork(Network n);
 
 public slots:
-  void handleButton(QAbstractButton* m_button);
   void refresh();
+<<<<<<< HEAD
   void prevPage();
   void nextPage();
+=======
+  void handleButton(QAbstractButton* m_button);
+>>>>>>> upstream/master-ci
 };
 
 class AdvancedNetworking : public QWidget {
@@ -41,8 +47,13 @@ public:
   explicit AdvancedNetworking(QWidget* parent = 0, WifiManager* wifi = 0);
 
 private:
+<<<<<<< HEAD
   QLabel* ipLabel;
   QPushButton* editPasswordButton;
+=======
+  LabelControl* ipLabel;
+  ButtonControl* editPasswordButton;
+>>>>>>> upstream/master-ci
   WifiManager* wifi = nullptr;
 
 signals:
@@ -60,7 +71,7 @@ public:
   explicit Networking(QWidget* parent = 0, bool show_advanced = true);
 
 private:
-  QStackedLayout* s = nullptr; // nm_warning, keyboard, wifiScreen, advanced
+  QStackedLayout* s = nullptr; // nm_warning, wifiScreen, advanced
   QWidget* wifiScreen = nullptr;
   AdvancedNetworking* an = nullptr;
   bool ui_setup_complete = false;

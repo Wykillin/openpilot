@@ -20,7 +20,11 @@ AbstractControl::AbstractControl(const QString &title, const QString &desc, cons
 
   hlayout = new QHBoxLayout;
   hlayout->setMargin(0);
+<<<<<<< HEAD
   hlayout->setSpacing(50);
+=======
+  hlayout->setSpacing(20);
+>>>>>>> upstream/master-ci
 
   // left icon
   if (!icon.isEmpty()) {
@@ -33,7 +37,11 @@ AbstractControl::AbstractControl(const QString &title, const QString &desc, cons
 
   // title
   title_label = new QPushButton(title);
+<<<<<<< HEAD
   title_label->setStyleSheet("font-size: 50px; font-weight: 400; text-align: left; background: none;");
+=======
+  title_label->setStyleSheet("font-size: 50px; font-weight: 400; text-align: left;");
+>>>>>>> upstream/master-ci
   hlayout->addWidget(title_label);
 
   vlayout->addLayout(hlayout);
@@ -53,4 +61,8 @@ AbstractControl::AbstractControl(const QString &title, const QString &desc, cons
   }
 
   setLayout(vlayout);
+<<<<<<< HEAD
+=======
+  setStyleSheet("background-color: transparent;");
+>>>>>>> upstream/master-ci
 }

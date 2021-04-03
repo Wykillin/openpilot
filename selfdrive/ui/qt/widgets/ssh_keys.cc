@@ -1,4 +1,5 @@
 #include <QNetworkReply>
+<<<<<<< HEAD
 
 #include "widgets/input.hpp"
 #include "widgets/ssh_keys.hpp"
@@ -39,14 +40,71 @@ SshControl::SshControl() : AbstractControl("SSH Keys", "Warning: This grants SSH
   networkTimer->setInterval(5000);
   connect(networkTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
+=======
+#include <QHBoxLayout>
+#include "widgets/input.hpp"
+#include "widgets/ssh_keys.hpp"
+#include "common/params.h"
+
+
+SshControl::SshControl() : AbstractControl("SSH Keys", "Warning: This grants SSH access to all public keys in your GitHub settings. Never enter a GitHub username other than your own. A comma employee will NEVER ask you to add their GitHub username.", "") {
+
+  // setup widget
+  hlayout->addStretch(1);
+
+  username_label.setAlignment(Qt::AlignVCenter);
+  username_label.setStyleSheet("color: #aaaaaa");
+  hlayout->addWidget(&username_label);
+
+  btn.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn.setFixedSize(250, 100);
+  hlayout->addWidget(&btn);
+
+  QObject::connect(&btn, &QPushButton::released, [=]() {
+    if (btn.text() == "ADD") {
+      username = InputDialog::getText("Enter your GitHub username");
+      if (username.length() > 0) {
+        btn.setText("LOADING");
+        btn.setEnabled(false);
+        getUserKeys(username);
+      }
+    } else {
+      Params().remove("GithubUsername");
+      Params().remove("GithubSshKeys");
+      refresh();
+    }
+  });
+
+  // setup networking
+  manager = new QNetworkAccessManager(this);
+  networkTimer = new QTimer(this);
+  networkTimer->setSingleShot(true);
+  networkTimer->setInterval(5000);
+  connect(networkTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+
+>>>>>>> upstream/master-ci
   refresh();
 }
 
 void SshControl::refresh() {
   QString param = QString::fromStdString(Params().get("GithubSshKeys"));
   if (param.length()) {
+<<<<<<< HEAD
     btn.setText("REMOVE");
   } else {
+=======
+    username_label.setText(QString::fromStdString(Params().get("GithubUsername")));
+    btn.setText("REMOVE");
+  } else {
+    username_label.setText("");
+>>>>>>> upstream/master-ci
     btn.setText("ADD");
   }
   btn.setEnabled(true);
@@ -79,7 +137,12 @@ void SshControl::parseResponse(){
     networkTimer->stop();
     QString response = reply->readAll();
     if (reply->error() == QNetworkReply::NoError && response.length()) {
+<<<<<<< HEAD
       Params().write_db_value("GithubSshKeys", response.toStdString());
+=======
+      Params().put("GithubUsername", username.toStdString());
+      Params().put("GithubSshKeys", response.toStdString());
+>>>>>>> upstream/master-ci
     } else if(reply->error() == QNetworkReply::NoError){
       err = "Username '" + username + "' has no keys on GitHub";
     } else {
@@ -87,12 +150,21 @@ void SshControl::parseResponse(){
     }
   } else {
     err = "Request timed out";
+<<<<<<< HEAD
   }
 
   if (err.length()) {
     ConfirmationDialog::alert(err);
   }
 
+=======
+  }
+
+  if (err.length()) {
+    ConfirmationDialog::alert(err);
+  }
+
+>>>>>>> upstream/master-ci
   refresh();
   reply->deleteLater();
   reply = nullptr;

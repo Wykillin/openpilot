@@ -10,13 +10,6 @@
 #include "ui.hpp"
 #include "paint.hpp"
 
-
-int write_param_float(float param, const char* param_name, bool persistent_param) {
-  char s[16];
-  int size = snprintf(s, sizeof(s), "%f", param);
-  return Params(persistent_param).write_db_value(param_name, s, size < sizeof(s) ? size : sizeof(s));
-}
-
 // Projects a point in car to space to the corresponding point in full frame
 // image space.
 static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, float in_z, vertex_data *out) {
@@ -29,6 +22,21 @@ static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, 
   float x = KEp.v[0] / KEp.v[2];
   float y = KEp.v[1] / KEp.v[2];
 
+<<<<<<< HEAD
+// Projects a point in car to space to the corresponding point in full frame
+// image space.
+static bool calib_frame_to_full_frame(const UIState *s, float in_x, float in_y, float in_z, vertex_data *out) {
+  const float margin = 500.0f;
+  const vec3 pt = (vec3){{in_x, in_y, in_z}};
+  const vec3 Ep = matvecmul3(s->scene.view_from_calib, pt);
+  const vec3 KEp = matvecmul3(fcam_intrinsic_matrix, Ep);
+
+  // Project.
+  float x = KEp.v[0] / KEp.v[2];
+  float y = KEp.v[1] / KEp.v[2];
+
+=======
+>>>>>>> upstream/master-ci
   nvgTransformPoint(&out->x, &out->y, s->car_space_transform, x, y);
   return out->x >= -margin && out->x <= s->fb_w + margin && out->y >= -margin && out->y <= s->fb_h + margin;
 }
@@ -205,11 +213,14 @@ static void update_sockets(UIState *s) {
   }
   if (sm.updated("driverMonitoringState")) {
     scene.dmonitoring_state = sm["driverMonitoringState"].getDriverMonitoringState();
+<<<<<<< HEAD
     if(!scene.driver_view && !scene.ignition) {
       read_param(&scene.driver_view, "IsDriverViewEnabled");
     }
   } else if ((sm.frame - sm.rcv_frame("driverMonitoringState")) > UI_FREQ/2) {
     scene.driver_view = false;
+=======
+>>>>>>> upstream/master-ci
   }
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
@@ -284,6 +295,7 @@ static void update_alert(UIState *s) {
 static void update_params(UIState *s) {
   const uint64_t frame = s->sm->frame;
   UIScene &scene = s->scene;
+<<<<<<< HEAD
 
   if (frame % (5*UI_FREQ) == 0) {
     read_param(&scene.is_metric, "IsMetric");
@@ -292,6 +304,15 @@ static void update_params(UIState *s) {
     uint64_t last_ping = 0;
     if (read_param(&last_ping, "LastAthenaPingTime") == 0) {
       scene.athenaStatus = nanos_since_boot() - last_ping < 70e9 ? NET_CONNECTED : NET_ERROR;
+=======
+  Params params;
+  if (frame % (5*UI_FREQ) == 0) {
+    scene.is_metric = params.getBool("IsMetric");
+  } else if (frame % (6*UI_FREQ) == 0) {
+    scene.athenaStatus = NET_DISCONNECTED;
+    if (auto last_ping = params.get<float>("LastAthenaPingTime"); last_ping) {
+      scene.athenaStatus = nanos_since_boot() - *last_ping < 70e9 ? NET_CONNECTED : NET_ERROR;
+>>>>>>> upstream/master-ci
     }
   }
 }
@@ -334,8 +355,13 @@ static void update_status(UIState *s) {
       s->status = STATUS_DISENGAGED;
       s->scene.started_frame = s->sm->frame;
 
+<<<<<<< HEAD
       read_param(&s->scene.is_rhd, "IsRHD");
       read_param(&s->scene.end_to_end, "EndToEndToggle");
+=======
+      s->scene.is_rhd = Params().getBool("IsRHD");
+      s->scene.end_to_end = Params().getBool("EndToEndToggle");
+>>>>>>> upstream/master-ci
       s->sidebar_collapsed = true;
       s->scene.alert_size = cereal::ControlsState::AlertSize::NONE;
       s->vipc_client = s->scene.driver_view ? s->vipc_client_front : s->vipc_client_rear;

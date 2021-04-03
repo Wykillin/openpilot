@@ -27,6 +27,11 @@ public:
   };
   static void set_display_power(bool on) {};
 
+<<<<<<< HEAD
   static bool get_ssh_enabled() { return Params().read_db_bool("SshEnabled"); };
   static void set_ssh_enabled(bool enabled) { Params().write_db_value("SshEnabled", (enabled ? "1" : "0")); };
+=======
+  static bool get_ssh_enabled() { return Params().getBool("SshEnabled"); };
+  static void set_ssh_enabled(bool enabled) { Params().putBool("SshEnabled", enabled); };
+>>>>>>> upstream/master-ci
 };
