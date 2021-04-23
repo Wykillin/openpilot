@@ -14,8 +14,17 @@ QFrame *horizontal_line(QWidget *parent = nullptr);
 class AbstractControl : public QFrame {
   Q_OBJECT
 
+public:
+  void setDescription(const QString &desc) {
+    if(description) description->setText(desc);
+  }
+
+signals:
+  void showDescription();
+
 protected:
   AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
+  void hideEvent(QHideEvent *e);
 
   QSize minimumSizeHint() const override {
     QSize size = QFrame::minimumSizeHint();
@@ -107,13 +116,15 @@ class ParamControl : public ToggleControl {
   Q_OBJECT
 
 public:
-  ParamControl(const QString &param, const QString &title, const QString &desc, const QString &icon, QWidget *parent = nullptr) : ToggleControl(title, desc, icon, parent) {
-    // set initial state from param
-    if (Params().getBool(param.toStdString().c_str())) {
+  ParamControl(const QString &param, const QString &title, const QString &desc, const QString &icon, QWidget *parent = nullptr) : ToggleControl(title, desc, icon, false, parent) {
+    if (params.getBool(param.toStdString().c_str())) {
       toggle.togglePosition();
     }
-    QObject::connect(this, &ToggleControl::toggleFlipped, [=](int state) {
-      Params().putBool(param.toStdString().c_str(), (bool)state);
+    QObject::connect(this, &ToggleControl::toggleFlipped, [=](bool state) {
+      params.putBool(param.toStdString().c_str(), state);
     });
   }
+
+private:
+  Params params;
 };

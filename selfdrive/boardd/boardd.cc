@@ -31,7 +31,6 @@
 #include "panda.h"
 #include "pigeon.h"
 
-
 #define MAX_IR_POWER 0.5f
 #define MIN_IR_POWER 0.0f
 #define CUTOFF_IL 200
@@ -362,8 +361,13 @@ void panda_state_thread(bool spoofing_started) {
     ps.setUptime(pandaState.uptime);
 
 #ifdef QCOM2
+    double read_time = millis_since_boot();
     ps.setVoltage(std::stoi(util::read_file("/sys/class/hwmon/hwmon1/in1_input")));
     ps.setCurrent(std::stoi(util::read_file("/sys/class/hwmon/hwmon1/curr1_input")));
+    read_time = millis_since_boot() - read_time;
+    if (read_time > 50) {
+      LOGW("reading hwmon took %lfms", read_time);
+    }
 #else
     ps.setVoltage(pandaState.voltage);
     ps.setCurrent(pandaState.current);
@@ -494,8 +498,8 @@ void pigeon_thread() {
 
   std::unordered_map<char, uint64_t> last_recv_time;
   std::unordered_map<char, int64_t> cls_max_dt = {
-    {(char)ublox::CLASS_NAV, int64_t(250000000ULL)}, // 0.25s
-    {(char)ublox::CLASS_RXM, int64_t(250000000ULL)}, // 0.25s
+    {(char)ublox::CLASS_NAV, int64_t(900000000ULL)}, // 0.9s
+    {(char)ublox::CLASS_RXM, int64_t(900000000ULL)}, // 0.9s
   };
 
   while (!do_exit && panda->connected) {
@@ -566,10 +570,13 @@ int main() {
   // set process priority and affinity
   err = set_realtime_priority(54);
   LOG("set priority returns %d", err);
-  err = set_core_affinity(3);
-  LOG("set affinity returns %d", err);
 
-  panda_set_power(true);
+#ifdef QCOM2
+  err = set_core_affinity(4);
+#else
+  err = set_core_affinity(3);
+#endif
+  LOG("set affinity returns %d", err);
 
   while (!do_exit){
     std::vector<std::thread> threads;
