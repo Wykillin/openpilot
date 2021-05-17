@@ -12,7 +12,7 @@ import cereal.messaging as messaging
 from cereal import log
 from common.filter_simple import FirstOrderFilter
 from common.numpy_fast import clip, interp
-from common.params import Params
+from common.params import Params, ParamKeyType
 from common.realtime import DT_TRML, sec_since_boot
 from common.dict_helpers import strip_deprecated_keys
 from selfdrive.controls.lib.alertmanager import set_offroad_alert
@@ -155,6 +155,7 @@ def thermald_thread():
 
   network_type = NetworkType.none
   network_strength = NetworkStrength.unknown
+  network_info = None
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
   cpu_temp_filter = FirstOrderFilter(0., CPU_TEMP_TAU, DT_TRML)
@@ -222,7 +223,7 @@ def thermald_thread():
       if pandaState_prev is not None:
         if pandaState.pandaState.pandaType == log.PandaState.PandaType.unknown and \
           pandaState_prev.pandaState.pandaType != log.PandaState.PandaType.unknown:
-          params.panda_disconnect()
+          params.clear_all(ParamKeyType.CLEAR_ON_PANDA_DISCONNECT)
       pandaState_prev = pandaState
 
     # get_network_type is an expensive call. update every 10s
@@ -230,6 +231,7 @@ def thermald_thread():
       try:
         network_type = HARDWARE.get_network_type()
         network_strength = HARDWARE.get_network_strength(network_type)
+        network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
       except Exception:
         cloudlog.exception("Error getting network status")
 
@@ -238,6 +240,9 @@ def thermald_thread():
     msg.deviceState.cpuUsagePercent = int(round(psutil.cpu_percent()))
     msg.deviceState.networkType = network_type
     msg.deviceState.networkStrength = network_strength
+    if network_info is not None:
+      msg.deviceState.networkInfo = network_info
+
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
     msg.deviceState.batteryStatus = HARDWARE.get_battery_status()
     msg.deviceState.batteryCurrent = HARDWARE.get_battery_current()
@@ -351,8 +356,8 @@ def thermald_thread():
       params.put_bool("IsOffroad", not should_start)
       HARDWARE.set_power_save(not should_start)
       if TICI and not params.get_bool("EnableLteOnroad"):
-        fxn = "stop" if should_start else "start"
-        os.system(f"sudo systemctl {fxn} --no-block lte")
+        fxn = "off" if should_start else "on"
+        os.system(f"nmcli radio wwan {fxn}")
 
     if should_start:
       off_ts = None

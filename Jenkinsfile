@@ -36,7 +36,7 @@ EOF"""
 
 def phone_steps(String device_type, steps) {
   lock(resource: "", label: device_type, inversePrecedence: true, variable: 'device_ip', quantity: 1) {
-    timeout(time: 60, unit: 'MINUTES') {
+    timeout(time: 90, unit: 'MINUTES') {
       phone(device_ip, "git checkout", readFile("selfdrive/test/setup_device_ci.sh"),)
       steps.each { item ->
         phone(device_ip, item[0], item[1])
@@ -163,7 +163,7 @@ pipeline {
                 stage('Power Consumption Tests') {
                   steps {
                     lock(resource: "", label: "c2-zookeeper", inversePrecedence: true, variable: 'device_ip', quantity: 1) {
-                      timeout(time: 60, unit: 'MINUTES') {
+                      timeout(time: 90, unit: 'MINUTES') {
                         sh script: "/home/batman/tools/zookeeper/enable_and_wait.py $device_ip 120", label: "turn on device"
                         phone(device_ip, "git checkout", readFile("selfdrive/test/setup_device_ci.sh"),)
                         phone(device_ip, "build", "SCONS_CACHE=1 scons -j4 && sync")
@@ -186,7 +186,7 @@ pipeline {
                   }
                   steps {
                     phone_steps("tici", [
-                      ["build", "SCONS_CACHE=1 scons -j16"],
+                      ["build", "SCONS_CACHE=1 scons -j8"],
                       ["test loggerd", "python selfdrive/loggerd/tests/test_loggerd.py"],
                       ["test encoder", "LD_LIBRARY_PATH=/usr/local/lib python selfdrive/loggerd/tests/test_encoder.py"],
                       ["onroad tests", "cd selfdrive/test/ && ./test_onroad.py"],
@@ -198,7 +198,7 @@ pipeline {
                 stage('camerad') {
                   steps {
                     phone_steps("eon-party", [
-                      ["build", "SCONS_CACHE=1 scons -j16"],
+                      ["build", "SCONS_CACHE=1 scons -j8"],
                       ["test camerad", "python selfdrive/camerad/test/test_camerad.py"],
                       ["test exposure", "python selfdrive/camerad/test/test_exposure.py"],
                     ])
@@ -208,7 +208,7 @@ pipeline {
                 stage('Tici camerad') {
                   steps {
                     phone_steps("tici-party", [
-                      ["build", "SCONS_CACHE=1 scons -j16"],
+                      ["build", "SCONS_CACHE=1 scons -j8"],
                       ["test camerad", "python selfdrive/camerad/test/test_camerad.py"],
                       ["test exposure", "python selfdrive/camerad/test/test_exposure.py"],
                     ])
