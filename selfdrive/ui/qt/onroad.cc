@@ -30,7 +30,7 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
     QMapboxGLSettings settings;
     settings.setCacheDatabasePath("/tmp/mbgl-cache.db");
     settings.setCacheDatabaseMaximumSize(20 * 1024 * 1024);
-    settings.setAccessToken(token);
+    settings.setAccessToken(token.trimmed());
     map = new MapWindow(settings);
     split->addWidget(map);
   }
@@ -41,6 +41,7 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   layout->addWidget(split_wrapper);
 
   alerts = new OnroadAlerts(this);
+  alerts->setAttribute(Qt::WA_TransparentForMouseEvents, true);
   QObject::connect(this, &OnroadWindow::update, alerts, &OnroadAlerts::updateState);
   QObject::connect(this, &OnroadWindow::offroadTransition, alerts, &OnroadAlerts::offroadTransition);
   layout->addWidget(alerts);
