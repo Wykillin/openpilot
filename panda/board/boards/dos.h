@@ -26,9 +26,9 @@ void dos_enable_can_transceivers(bool enabled) {
   for(uint8_t i=1U; i<=4U; i++){
     // Leave main CAN always on for CAN-based ignition detection
     if((car_harness_status == HARNESS_STATUS_FLIPPED) ? (i == 3U) : (i == 1U)){
-      dos_enable_can_transceiver(i, true);
+      uno_enable_can_transceiver(i, true);
     } else {
-      dos_enable_can_transceiver(i, enabled);
+      uno_enable_can_transceiver(i, enabled);
     }
   }
 }
